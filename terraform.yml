@@ -1,0 +1,20 @@
+name: "Terraform GitHub Actions"
+on:
+  pull_request:
+  push:
+    branches:
+      -main
+jobs:
+  terraform:
+    name: "Terraform Init"
+    runs-on: ubuntu-latest
+    steps:
+      -name: "checkout"
+       uses: actions/checkout@v1
+      -name: "Terraform Initialization"
+       uses: ghreddy1980/Terraform-aactions@main {owner/repo@branch}
+       with:
+         tf_actions_version: 0.12.18
+         tf_actions_subcommand: "init"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
