@@ -1,0 +1,40 @@
+name: provision ec2
+on:
+  workflow_dispatch:
+    inputs:
+      ec2_name:
+        description: EC2 name
+        required: true
+        default: 'ghreddy1980'
+        type: string
+jobs:
+  provision_ec2:
+    runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            node-version: '14'
+        - name: configure AWS credentials
+        - uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws_access_key_id: '{{ secrets.TF_USER_ACCESS_KEY }}'
+            aws_secret_access_key: '{{ secrets.TF_USER_SECRET_ACCESS_KEY }}'
+            aws_region: us-est-1
+        - name: setup Terraform
+          uses: hashocorp/setup-Terraform@v2
+          with:
+            terraform_wraper: false
+        - name: Terraform Apply
+          id: Apply
+          env:
+            TF_VAR_ec2_name:  "${{ github.event.inputs.ec2_name }}"
+          run: |
+            cd tf-example/
+            terraform init
+            terraform validate
+            terraform plan
+            terraform apply -auto-approve
+
+
+
